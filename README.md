@@ -66,6 +66,13 @@ This project demonstrates practical frontend development skills, state managemen
 
 - Node.js (v18 or later recommended)
 - npm or yarn
+- A Supabase Project
+
+### Supabase Setup
+
+1. Create a new project on [Supabase](https://supabase.com).
+2. Go to the SQL Editor in your Supabase dashboard and run the contents of `supabase/schema.sql` to create the necessary tables and Row Level Security (RLS) policies.
+3. Obtain your Project URL and anon key from Project Settings > API.
 
 ### Installation
 
@@ -77,10 +84,20 @@ cd stock-portfolio-app
 
 2. Install dependencies:
 ```bash
-npm install
+npm install --legacy-peer-deps
 ```
 
-3. Start the development server:
+3. Configure Environment Variables:
+Create a `.env` file in the root directory and add your keys (see `.env.example`):
+```
+VITE_SUPABASE_URL=your_supabase_url
+VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+VITE_FINNHUB_API_KEY=your_finnhub_api_key
+VITE_ALPHAVANTAGE_API_KEY=your_alphavantage_api_key
+```
+You can get a free API key for real-time market data from [Finnhub](https://finnhub.io/).
+
+4. Start the development server:
 ```bash
 npm run dev
 ```
@@ -93,55 +110,6 @@ The app will be available at:
 ```bash
 npm run build
 ```
-
-### Run Tests
-
-```bash
-npm run test
-```
-
-### Lint Code
-
-```bash
-npm run lint
-```
-
-## Project Structure
-
-```
-src/
-├── App.tsx                 # Main application component
-├── main.tsx                # App entry point
-├── types.ts                # TypeScript type definitions
-├── App.css                 # Component styles and CSS variables
-├── index.css               # Global styles and Tailwind imports
-├── components/             # React components
-│   ├── StockTable.tsx      # Stock holdings table
-│   ├── PortfolioMetrics.tsx # Portfolio statistics
-│   ├── AddStockForm.tsx    # Stock addition form
-│   ├── AllocationChart.tsx # Portfolio allocation pie chart
-│   └── HistoricalChart.tsx # Performance history line chart
-├── hooks/                  # Custom React hooks
-│   ├── usePortfolio.ts     # Portfolio state management
-│   ├── useStockData.ts     # Stock price fetching
-│   └── useHistoricalData.ts # Historical data generation
-├── reducers/               # State reducers
-│   └── portfolioReducer.ts # Portfolio state logic
-├── utils/                  # Utility functions
-│   └── exportUtils.ts      # CSV/PDF export functions
-└── assets/                 # Static assets
-```
-
-## API Configuration
-
-The app uses Alpha Vantage for real-time stock data. For full functionality:
-
-1. Sign up for a free API key at [Alpha Vantage](https://www.alphavantage.co/support/#api-key)
-2. Create a `.env` file in the root directory
-3. Add your API key: `VITE_API_KEY=your_api_key_here`
-
-Note: The demo key has rate limits. For production use, obtain your own API key.
-
 ## Deployment
 
 ### Vercel (Recommended)

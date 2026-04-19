@@ -1,161 +1,122 @@
 import React, { useState } from 'react';
-import type { Stock } from '../types';
+import { Plus, PlusCircle, Search } from 'lucide-react';
+import { usePortfolioStore } from '../store/usePortfolioStore';
+import { useAuthStore } from '../store/useAuthStore';
+import { Card } from './ui/Card';
+import toast from 'react-hot-toast';
 
-interface AddStockFormProps {
-  onSubmit: (stock: Omit<Stock, 'id'>) => void;
-  errors: Record<string, string>;
-  loading?: boolean;
-}
+export const AddStockForm: React.FC = () => {
+  const [symbol, setSymbol] = useState('');
+  const [shares, setShares] = useState('');
+  const [price, setPrice] = useState('');
+  const { addPosition, loading } = usePortfolioStore();
+  const { user } = useAuthStore();
 
-export const AddStockForm: React.FC<AddStockFormProps> = ({ onSubmit, errors, loading = false }) => {
-  const [formData, setFormData] = useState<Omit<Stock, 'id'>>({
-    name: '',
-    symbol: '',
-    shares_owned: 0,
-    cost_per_share: 0,
-    market_price: 0,
-  });
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: name === 'name' || name === 'symbol' ? value : parseFloat(value) || 0,
-    }));
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!user) return;
+    if (!symbol || !shares || !price) {
+      toast.error('Please fill out all fields');
+      return;
+    }
+    try {
+      await addPosition({
+        user_id: user.id,
+        symbol: symbol.toUpperCase().trim(),
+        shares_owned: parseFloat(shares),
+        cost_per_share: parseFloat(price),
+      });
+      toast.success(`${symbol.toUpperCase()} added to portfolio`);
+      setSymbol('');
+      setShares('');
+      setPrice('');
+    } catch (error: any) {
+      toast.error('Failed to add: ' + error.message);
+    }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    onSubmit(formData);
-    // Reset form after submission
-    setFormData({
-      name: '',
-      symbol: '',
-      shares_owned: 0,
-      cost_per_share: 0,
-      market_price: 0,
-    });
+  const inputStyle: React.CSSProperties = {
+    width: '100%',
+    background: 'var(--bg-secondary)',
+    border: '1px solid var(--border-color)',
+    color: 'var(--text-primary)',
+    borderRadius: '8px',
+    padding: '9px 12px',
+    fontSize: '13px',
+    fontFamily: '"JetBrains Mono", ui-monospace, monospace',
+    outline: 'none',
+    transition: 'border-color 0.2s, box-shadow 0.2s',
+  };
+
+  const labelStyle: React.CSSProperties = {
+    display: 'block',
+    fontSize: '10px',
+    fontWeight: 700,
+    textTransform: 'uppercase',
+    letterSpacing: '0.1em',
+    color: 'var(--text-secondary)',
+    marginBottom: '6px',
   };
 
   return (
-    <div className="card">
-      <h2 className="card-title">Add New Stock</h2>
-      
-      <form onSubmit={handleSubmit}>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="form-group">
-            <label htmlFor="name" className="form-label">
-              Stock Name *
-            </label>
+    <Card title="Add Position" icon={<PlusCircle size={16} />}>
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div>
+          <label style={labelStyle}>Ticker Symbol</label>
+          <div className="relative">
+            <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: 'var(--text-muted)' }} />
             <input
               type="text"
-              id="name"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              className={`form-control ${errors.name ? 'is-invalid' : ''}`}
-              placeholder="e.g., Apple Inc."
-              required
+              style={{ ...inputStyle, paddingLeft: '32px', textTransform: 'uppercase' }}
+              placeholder="AAPL, TSLA, GOOG..."
+              value={symbol}
+              onChange={(e) => setSymbol(e.target.value)}
+              onFocus={(e) => { e.target.style.borderColor = '#3B82F6'; e.target.style.boxShadow = '0 0 0 3px rgba(59,130,246,0.12)'; }}
+              onBlur={(e) => { e.target.style.borderColor = 'var(--border-color)'; e.target.style.boxShadow = 'none'; }}
             />
-            {errors.name && (
-              <div className="invalid-feedback">{errors.name}</div>
-            )}
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="symbol" className="form-label">
-              Stock Symbol *
-            </label>
-            <input
-              type="text"
-              id="symbol"
-              name="symbol"
-              value={formData.symbol}
-              onChange={handleChange}
-              className={`form-control ${errors.symbol ? 'is-invalid' : ''}`}
-              placeholder="e.g., AAPL"
-              required
-            />
-            {errors.symbol && (
-              <div className="invalid-feedback">{errors.symbol}</div>
-            )}
           </div>
         </div>
 
-        <div className="grid grid-cols-2">
-          <div className="form-group">
-            <label htmlFor="shares_owned" className="form-label">
-              Shares Owned *
-            </label>
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <label style={labelStyle}>Shares</label>
             <input
               type="number"
-              id="shares_owned"
-              name="shares_owned"
-              value={formData.shares_owned || ''}
-              onChange={handleChange}
               min="0"
-              step="1"
-              className={`form-control ${errors.shares_owned ? 'is-invalid' : ''}`}
-              placeholder="0"
-              required
+              step="any"
+              style={inputStyle}
+              placeholder="100"
+              value={shares}
+              onChange={(e) => setShares(e.target.value)}
+              onFocus={(e) => { e.target.style.borderColor = '#3B82F6'; e.target.style.boxShadow = '0 0 0 3px rgba(59,130,246,0.12)'; }}
+              onBlur={(e) => { e.target.style.borderColor = 'var(--border-color)'; e.target.style.boxShadow = 'none'; }}
             />
-            {errors.shares_owned && (
-              <div className="invalid-feedback">{errors.shares_owned}</div>
-            )}
           </div>
-
-          <div className="form-group">
-            <label htmlFor="cost_per_share" className="form-label">
-              Cost per Share ($) *
-            </label>
+          <div>
+            <label style={labelStyle}>Avg Cost ($)</label>
             <input
               type="number"
-              id="cost_per_share"
-              name="cost_per_share"
-              value={formData.cost_per_share || ''}
-              onChange={handleChange}
               min="0"
-              step="0.01"
-              className={`form-control ${errors.cost_per_share ? 'is-invalid' : ''}`}
+              step="any"
+              style={inputStyle}
               placeholder="0.00"
-              required
+              value={price}
+              onChange={(e) => setPrice(e.target.value)}
+              onFocus={(e) => { e.target.style.borderColor = '#3B82F6'; e.target.style.boxShadow = '0 0 0 3px rgba(59,130,246,0.12)'; }}
+              onBlur={(e) => { e.target.style.borderColor = 'var(--border-color)'; e.target.style.boxShadow = 'none'; }}
             />
-            {errors.cost_per_share && (
-              <div className="invalid-feedback">{errors.cost_per_share}</div>
-            )}
           </div>
         </div>
 
-        <div className="form-group">
-          <label htmlFor="market_price" className="form-label">
-            Current Market Price ($)
-          </label>
-          <input
-            type="number"
-            id="market_price"
-            name="market_price"
-            value={formData.market_price || ''}
-            onChange={handleChange}
-            min="0"
-            step="0.01"
-            className={`form-control ${errors.market_price ? 'is-invalid' : ''}`}
-            placeholder="0.00 (leave blank to auto-fetch)"
-          />
-          {errors.market_price && (
-            <div className="invalid-feedback">{errors.market_price}</div>
-          )}
-        </div>
-
-        <div className="flex justify-end">
-          <button
-            type="submit"
-            disabled={loading}
-            className={`btn btn-primary ${loading ? 'loading' : ''}`}
-          >
-            {loading ? 'Adding...' : 'Add Stock to Portfolio'}
-          </button>
-        </div>
+        <button
+          type="submit"
+          disabled={loading}
+          className="btn-primary w-full"
+        >
+          <Plus size={16} />
+          {loading ? 'Adding...' : 'Add to Portfolio'}
+        </button>
       </form>
-    </div>
+    </Card>
   );
 };

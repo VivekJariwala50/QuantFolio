@@ -1,29 +1,35 @@
-export interface Stock {
-  id: string; 
-  name: string;
+export interface Position {
+  id: string;
+  user_id?: string;
   symbol: string;
   shares_owned: number;
   cost_per_share: number;
-  market_price: number;
-  daily_change?: number;
-  last_updated?: string;
+  created_at?: string;
+  updated_at?: string;
 }
 
-export interface PortfolioState {
-  portfolio: Stock[];
-  form: Omit<Stock, 'id'>;
-  errors: Record<string, string>;
-  loading: boolean;
-  selectedStock?: Stock;
+export interface StockPrice {
+  symbol: string;
+  price: number;
+  change: number;
+  percentChange: number;
+  timestamp: number;
 }
 
-export type PortfolioAction = 
-  | { type: 'LOAD_PORTFOLIO'; payload: Stock[] }
-  | { type: 'ADD_STOCK'; payload: Stock }
-  | { type: 'REMOVE_STOCK'; id: string }
-  | { type: 'UPDATE_STOCK'; payload: Partial<Stock>; id: string }
-  | { type: 'UPDATE_FORM'; field: keyof Omit<Stock, 'id'>; value: string | number }
-  | { type: 'SET_ERRORS'; payload: Record<string, string> }
-  | { type: 'UPDATE_PRICES'; updates: Array<{ id: string; price: number; change: number }> }
-  | { type: 'SET_LOADING'; loading: boolean }
-  | { type: 'SELECT_STOCK'; stock?: Stock };
+export interface PortfolioSnapshot {
+  id: string;
+  user_id: string;
+  total_value: number;
+  snapshot_date: string;
+}
+
+export interface StockQuoteResponse {
+  c: number; // Current price
+  d: number; // Change
+  dp: number; // Percent change
+  h: number; // High
+  l: number; // Low
+  o: number; // Open
+  pc: number; // Previous close
+  t: number; // timestamp
+}

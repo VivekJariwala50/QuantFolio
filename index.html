@@ -1,29 +1,29 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
   <head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     
     <!-- Primary Meta Tags -->
-    <title>Stockfolio - Modern Stock Portfolio Tracker</title>
-    <meta name="description" content="Track, analyze, and manage your stock portfolio with real-time data and beautiful visualizations">
-    <meta name="keywords" content="stocks, portfolio, finance, investing, tracker, analysis, market">
-    <meta name="author" content="Stockfolio">
-    <meta name="theme-color" content="#2563eb">
+    <title>QuantFolio - Advanced Wealth Analytics</title>
+    <meta name="description" content="Ultra-premium stock portfolio tracker with advanced risk analytics, benchmark comparisons, and smart insights.">
+    <meta name="keywords" content="stocks, portfolio, finance, investing, tracker, analysis, market, QuantFolio">
+    <meta name="author" content="QuantFolio">
+    <meta name="theme-color" content="#0f172a">
     
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://yourdomain.com/">
-    <meta property="og:title" content="Stockfolio - Modern Stock Portfolio Tracker">
-    <meta property="og:description" content="Track, analyze, and manage your stock portfolio with real-time data">
-    <meta property="og:image" content="https://yourdomain.com/og-image.png">
+    <meta property="og:url" content="https://quantfolio.app/">
+    <meta property="og:title" content="QuantFolio - Advanced Wealth Analytics">
+    <meta property="og:description" content="Track, analyze, and manage your wealth with institutional-grade data.">
+    <meta property="og:image" content="https://quantfolio.app/og-image.png">
     
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="https://yourdomain.com/">
-    <meta property="twitter:title" content="Stockfolio - Modern Stock Portfolio Tracker">
-    <meta property="twitter:description" content="Track, analyze, and manage your stock portfolio with real-time data">
+    <meta property="twitter:url" content="https://quantfolio.app/">
+    <meta property="twitter:title" content="QuantFolio - Advanced Wealth Analytics">
+    <meta property="twitter:description" content="Track, analyze, and manage your wealth with institutional-grade data.">
     <meta property="twitter:image" content="https://yourdomain.com/twitter-image.png">
     
     <!-- Favicon & App Icons -->
@@ -39,7 +39,7 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Stockfolio">
+    <meta name="apple-mobile-web-app-title" content="QuantFolio">
     
     <!-- Preconnect to external domains -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -106,8 +106,8 @@
         <span class="visually-hidden">Loading...</span>
       </div>
       <div class="mt-3">
-        <h2>Stockfolio</h2>
-        <p class="mb-0">Loading your portfolio...</p>
+        <h2>QuantFolio</h2>
+        <p class="mb-0">Initializing analytics...</p>
       </div>
     </div>
     
@@ -143,17 +143,7 @@
     <script type="module" src="/src/main.tsx" crossorigin></script>
     
     <!-- Service Worker Registration (for PWA) -->
-    <script>
-      if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-          navigator.serviceWorker.register('/sw.js').then(registration => {
-            console.log('SW registered: ', registration);
-          }).catch(registrationError => {
-            console.log('SW registration failed: ', registrationError);
-          });
-        });
-      }
-    </script>
+    <!-- Service Worker Registration Removed -->
     
     <!-- Loading Screen Handler -->
     <script>
