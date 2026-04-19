@@ -1,161 +1,117 @@
-# 📈 Stock Portfolio Tracker
+# QuantFolio 📈
 
-A modern web application for managing and analyzing a personal stock portfolio. The app allows users to track holdings, calculate portfolio performance, and visualize gains and losses in real time.
+**Advanced Wealth Analytics Platform**
 
-## Overview
+QuantFolio is an institutional-grade, premium web application for managing, tracking, and analyzing personal stock portfolios. It combines a stunning dark-mode optimized design system with real-time analytics to give retail investors tools typically reserved for professionals.
 
-The Stock Portfolio Tracker is a React-based web application designed to help users manage their stock investments in a clear and structured way. Users can add, update, and remove stock positions while viewing calculated metrics such as market value and unrealized gains or losses.
+[**Live Demo (Vercel)**](https://quantfolio-mauve.vercel.app/)
 
-**This project originated as a school assignment 6 years ago and has been completely modernized with current technologies and best practices.** The updated version features improved mobile responsiveness, modern React patterns, TypeScript integration, and enhanced user experience.
+---
 
-This project demonstrates practical frontend development skills, state management, financial data handling, and modern web development practices.
+## 🌟 Key Features
 
-## Features
+*   **Premium Dashboard:** A responsive, 12-column grid architecture offering a "command center" view of your wealth.
+*   **Real-time Analytics:** Tracks current prices, market values, and calculates real-time unrealized P&L across all positions.
+*   **Smart Insights Engine:** Automatically detects sector concentration and overall portfolio risks.
+*   **Risk Metrics:** Provides institutional-style metrics including Portfolio Volatility, Sharpe Ratio, and Maximum Drawdown.
+*   **Interactive Projections:** Compound interest simulator to model future portfolio growth against expected market returns.
+*   **Data Portability:** Seamlessly import and export portfolio positions via CSV.
+*   **Responsive & Dynamic Theme:** Full light/dark mode support with fluid CSS variable-based styling, utilizing modern Tailwind v4.
 
-### Core Functionality
-- ✅ Add and manage stock positions with symbol, shares, cost basis, and market price
-- ✅ Edit existing positions inline
-- ✅ Automatic calculation of market value and unrealized gain/loss per stock
-- ✅ Portfolio summary with total value and overall gain/loss
-- ✅ Data persistence using localStorage
-- ✅ Input validation and error handling
+---
 
-### Advanced Features
-- ✅ Real-time stock price integration via Alpha Vantage API
-- ✅ Auto-refresh market prices every 5 minutes
-- ✅ Daily change percentage display
-- ✅ Portfolio allocation pie chart
-- ✅ Gain/loss over time line chart
-- ✅ Best and worst performing stocks analysis
-- ✅ Export portfolio data to CSV
-- ✅ Clean, responsive UI with accessibility features
+## 🚀 Tech Stack
 
-### Developer Experience
-- ✅ Built with TypeScript for type safety
-- ✅ Modern React 19 with hooks and useReducer for state management
-- ✅ Vite for fast development and optimized builds
-- ✅ ESLint for code linting
-- ✅ Vitest for unit testing
-- ✅ CI/CD with GitHub Actions
-- ✅ Progressive Web App (PWA) support
-- ✅ Ready for deployment on Vercel/Netlify
+*   **Frontend Framework:** React 18 with TypeScript and Vite
+*   **Styling Engine:** Tailwind CSS v4 (Using `@theme` directive & CSS Custom Properties)
+*   **State Management:** Zustand (for Auth, Portfolio Data, and Market Data)
+*   **Charting:** Recharts (Area charts, Pie charts with custom tooltips)
+*   **Icons:** Lucide React
+*   **Backend / Database:** Supabase (PostgreSQL with Row Level Security)
+*   **Data Virtualization:** `@tanstack/react-virtual` (for handling massive stock lists smoothly)
+*   **Hosting/Deployment:** Vercel
 
-### Recent Improvements (2026 Update)
-- ✅ Enhanced mobile responsiveness for iPhone SE and iPhone 14
-- ✅ Improved table layouts with responsive column hiding
-- ✅ Full-width component layouts for better space utilization
-- ✅ Modern CSS with custom properties and mobile-first design
-- ✅ Environment variable configuration for API keys
-- ✅ Updated dependencies and build tools
+---
 
-## Tech Stack
+## 💾 Database Architecture (ER Diagram)
 
-- **React 19** – Component-based UI development with hooks
-- **TypeScript** – Type-safe JavaScript
-- **Vite** – Fast build tool and dev server
-- **Tailwind CSS** – Utility-first CSS framework
-- **Recharts** – Data visualization library
-- **Alpha Vantage API** – Real-time stock market data
-- **Papaparse** – CSV export functionality
-- **Vitest** – Unit testing framework
-- **ESLint** – Code linting
+The backend runs on Supabase (PostgreSQL).
 
-## Getting Started
+```mermaid
+erDiagram
+    PROFILES {
+        uuid id PK "Matches auth.users"
+        string email
+        string first_name
+        string last_name
+        timestamp created_at
+    }
+    POSITIONS {
+        uuid id PK
+        uuid user_id FK
+        string symbol "e.g., AAPL"
+        numeric shares_owned
+        numeric cost_per_share
+        timestamp created_at
+        timestamp updated_at
+    }
+    PORTFOLIO_SNAPSHOTS {
+        uuid id PK
+        uuid user_id FK
+        numeric total_value
+        date snapshot_date "Daily tracking"
+        timestamp created_at
+    }
 
-### Prerequisites
+    PROFILES ||--o{ POSITIONS : "has many"
+    PROFILES ||--o{ PORTFOLIO_SNAPSHOTS : "has many (daily tracking)"
+```
 
-- Node.js (v18 or later recommended)
-- npm or yarn
-- A Supabase Project
+---
 
-### Supabase Setup
+## 💻 Local Development Setup
 
-1. Create a new project on [Supabase](https://supabase.com).
-2. Go to the SQL Editor in your Supabase dashboard and run the contents of `supabase/schema.sql` to create the necessary tables and Row Level Security (RLS) policies.
-3. Obtain your Project URL and anon key from Project Settings > API.
+To run this project locally on your machine:
 
-### Installation
-
-1. Clone the repository:
+**1. Clone the repository:**
 ```bash
-git clone https://github.com/yosephdev/stock-portfolio-app
-cd stock-portfolio-app
+git clone https://github.com/VivekJariwala50/QuantFolio.git
+cd QuantFolio
 ```
 
-2. Install dependencies:
+**2. Install Dependencies:**
 ```bash
-npm install --legacy-peer-deps
+npm install
 ```
 
-3. Configure Environment Variables:
-Create a `.env` file in the root directory and add your keys (see `.env.example`):
+**3. Environment Configuration:**
+Create a `.env` file in the root directory by copying `.env.example`:
+```bash
+cp .env.example .env
 ```
-VITE_SUPABASE_URL=your_supabase_url
-VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
-VITE_FINNHUB_API_KEY=your_finnhub_api_key
-VITE_ALPHAVANTAGE_API_KEY=your_alphavantage_api_key
-```
-You can get a free API key for real-time market data from [Finnhub](https://finnhub.io/).
+Fill in the following values in your `.env` file:
+*   `VITE_SUPABASE_URL` - Your Supabase project URL
+*   `VITE_SUPABASE_ANON_KEY` - Your Supabase public anon key
+*   `VITE_FINNHUB_API_KEY` - Optional: Finnhub API key
+*   `VITE_ALPHAVANTAGE_API_KEY` - Optional: Alpha Vantage API key
 
-4. Start the development server:
+**4. Start the Development Server:**
 ```bash
 npm run dev
 ```
-
-The app will be available at:
-👉 http://localhost:5173
-
-### Build for Production
-
-```bash
-npm run build
-```
-## Deployment
-
-### Vercel (Recommended)
-
-1. Push your code to GitHub
-2. Connect your repository to Vercel
-3. Deploy automatically on every push
-
-### Netlify
-
-1. Build the project: `npm run build`
-2. Upload the `dist` folder to Netlify
-3. Configure build settings if needed
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch: `git checkout -b feature-name`
-3. Make your changes and add tests
-4. Run linting: `npm run lint`
-5. Commit your changes: `git commit -am 'Add feature'`
-6. Push to the branch: `git push origin feature-name`
-7. Submit a pull request
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## Project Status
-
-This project was originally created as a school assignment 6 years ago and has been completely modernized in 2026 with current technologies and best practices. The updated version includes enhanced mobile responsiveness, improved user experience, and modern development tools.
-
-Future enhancements may include:
-- User authentication and multiple portfolios
-- Advanced analytics and reporting
-- Mobile app version
-- Integration with more data providers
-
-## Contact
-
-Yoseph Berhane  
-Fullstack Developer  
-📧 contact@yoseph.dev  
-
-🌐 https://yoseph.dev  
-
-🐙 GitHub: https://github.com/yosephdev  
+Navigate to `http://localhost:5173` to see the app.
 
 ---
+
+## 🔮 Future Roadmap
+
+*   **Plaid Integration:** Auto-sync positions directly from brokerages (Fidelity, Robinhood, Schwab).
+*   **Real Historical Data Pipelines:** Connect backend cron jobs to sync daily closing prices for accurate benchmark tracking.
+*   **Options & Crypto:** Expand asset class support beyond US equities.
+*   **Advanced Rebalancing:** One-click rebalancing suggestions to return to target sector weights.
+
+---
+
+## 📄 License
+
+This project is open-source and available under the MIT License.
