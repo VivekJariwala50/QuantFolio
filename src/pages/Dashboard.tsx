@@ -1,10 +1,12 @@
-import React, { useEffect, useMemo, useRef } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import Papa from 'papaparse';
+import * as XLSX from 'xlsx';
 import toast from 'react-hot-toast';
 import { Upload, Download, BarChart3 } from 'lucide-react';
 import { useAuthStore } from '../store/useAuthStore';
 import { usePortfolioStore } from '../store/usePortfolioStore';
 import { useMarketDataStore } from '../store/useMarketDataStore';
+import { useNotificationStore } from '../store/useNotificationStore';
 import { StockTable } from '../components/StockTable';
 import { PortfolioMetrics } from '../components/PortfolioMetrics';
 import { AddStockForm } from '../components/AddStockForm';
@@ -19,7 +21,9 @@ export const Dashboard: React.FC = () => {
   const { user } = useAuthStore();
   const { positions, fetchPositions, addPosition, loading: portfolioLoading } = usePortfolioStore();
   const { prices, fetchPrices, loading: pricesLoading } = useMarketDataStore();
+  const { addNotification } = useNotificationStore();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [notified, setNotified] = useState(false);
 
   useEffect(() => {
     if (user?.id) fetchPositions(user.id);
@@ -50,20 +54,49 @@ export const Dashboard: React.FC = () => {
     };
   }, []);
 
-  const handleExportCSV = () => {
-    const csv = Papa.unparse(positions.map(p => ({
-      Symbol: p.symbol,
-      Shares: p.shares_owned,
-      'Cost Per Share': p.cost_per_share,
-    })));
-    const blob = new Blob([csv], { type: 'text/csv' });
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(blob);
-    link.setAttribute('download', 'quantfolio_export.csv');
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    toast.success('Portfolio exported!');
+  useEffect(() => {
+    if (!pricesLoading && Object.keys(prices).length > 0 && positions.length > 0 && !notified) {
+      if (unrealizedGain > 0) {
+        addNotification({
+          title: 'Profit Alert',
+          message: `Your portfolio is up by $${unrealizedGain.toLocaleString(undefined, { maximumFractionDigits: 2 })}!`,
+          type: 'success',
+        });
+      } else if (unrealizedGain < 0) {
+        addNotification({
+          title: 'Loss Warning',
+          message: `Your portfolio is down by $${Math.abs(unrealizedGain).toLocaleString(undefined, { maximumFractionDigits: 2 })}.`,
+          type: 'warning',
+        });
+      }
+      setNotified(true);
+    }
+  }, [prices, pricesLoading, positions.length, unrealizedGain, notified, addNotification]);
+
+  const handleExportExcel = () => {
+    const data = positions.map(p => {
+      const currentPrice = prices[p.symbol]?.price || 0;
+      const marketValue = currentPrice * p.shares_owned;
+      const totalCost = p.shares_owned * p.cost_per_share;
+      const pnl = marketValue - totalCost;
+      const pnlPercent = totalCost > 0 ? (pnl / totalCost) * 100 : 0;
+      
+      return {
+        Symbol: p.symbol,
+        Shares: p.shares_owned,
+        'Cost Per Share': p.cost_per_share,
+        'Current Price': currentPrice,
+        'Market Value': marketValue,
+        'Total P&L ($)': pnl,
+        'Total P&L (%)': pnlPercent,
+      };
+    });
+
+    const worksheet = XLSX.utils.json_to_sheet(data);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Portfolio');
+    XLSX.writeFile(workbook, 'quantfolio_export.xlsx');
+    toast.success('Portfolio exported to Excel!');
   };
 
   const handleImportCSV = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -102,10 +135,10 @@ export const Dashboard: React.FC = () => {
     <div className="flex items-center gap-2">
       <input type="file" accept=".csv" ref={fileInputRef} className="hidden" onChange={handleImportCSV} />
       <button onClick={() => fileInputRef.current?.click()} className="btn-ghost">
-        <Upload size={13} /> Import
+        <Upload size={13} /> Import CSV
       </button>
-      <button onClick={handleExportCSV} className="btn-ghost">
-        <Download size={13} /> Export
+      <button onClick={handleExportExcel} className="btn-ghost">
+        <Download size={13} /> Export Excel
       </button>
     </div>
   );

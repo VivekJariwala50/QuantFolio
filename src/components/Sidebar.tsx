@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, Calculator, Activity, X, TrendingUp, Zap } from 'lucide-react';
+import { LayoutDashboard, Calculator, Activity, X, TrendingUp, Zap, Brain } from 'lucide-react';
 
 interface SidebarProps {
   isOpen: boolean;
@@ -10,6 +10,7 @@ interface SidebarProps {
 const navItems = [
   { to: '/', icon: LayoutDashboard, label: 'Dashboard' },
   { to: '/simulator', icon: Calculator, label: 'Simulator' },
+  { to: '/analytics', icon: Brain, label: 'AI Analytics' },
 ];
 
 export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {

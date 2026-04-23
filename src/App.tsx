@@ -4,6 +4,7 @@ import { useAuthStore } from './store/useAuthStore';
 import { Dashboard } from './pages/Dashboard';
 import { Auth } from './pages/Auth';
 import { Simulator } from './pages/Simulator';
+import { Analytics } from './pages/Analytics';
 import { Toaster } from 'react-hot-toast';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { Sidebar } from './components/Sidebar';
@@ -50,6 +51,7 @@ function AppContent() {
               <Routes>
                 <Route path="/" element={<Dashboard />} />
                 <Route path="/simulator" element={<Simulator />} />
+                <Route path="/analytics" element={<Analytics />} />
                 <Route path="*" element={<Navigate to="/" replace />} />
               </Routes>
             </main>

@@ -14,8 +14,10 @@ QuantFolio is an institutional-grade, premium web application for managing, trac
 *   **Real-time Analytics:** Tracks current prices, market values, and calculates real-time unrealized P&L across all positions.
 *   **Smart Insights Engine:** Automatically detects sector concentration and overall portfolio risks.
 *   **Risk Metrics:** Provides institutional-style metrics including Portfolio Volatility, Sharpe Ratio, and Maximum Drawdown.
+*   **Real-time Notifications:** Alerts for daily profit/loss movements in the top-bar notification center.
+*   **Advanced Analytics & AI:** Dedicated AI Analytics page with 12-month Monte Carlo portfolio simulations and momentum-based algorithmic health tracking.
 *   **Interactive Projections:** Compound interest simulator to model future portfolio growth against expected market returns.
-*   **Data Portability:** Seamlessly import and export portfolio positions via CSV.
+*   **Data Portability:** Seamlessly import positions via CSV and export comprehensive portfolio data into formatted Excel (.xlsx) files.
 *   **Responsive & Dynamic Theme:** Full light/dark mode support with fluid CSS variable-based styling, utilizing modern Tailwind v4.
 
 ---

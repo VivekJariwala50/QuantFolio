@@ -29,6 +29,7 @@
     "recharts": "^3.6.0",
     "tailwind-merge": "^2.3.0",
     "tailwindcss": "^4.1.18",
+    "xlsx": "^0.18.5",
     "zustand": "^4.5.2"
   },
   "devDependencies": {
